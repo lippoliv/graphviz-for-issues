@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: setup
         run: |
-          apt-get -y install graphviz
+          sudo apt-get -y install graphviz
 
       - name: render
         run: |
