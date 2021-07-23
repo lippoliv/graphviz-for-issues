@@ -1,0 +1,29 @@
+name: Render
+
+on:
+  push:
+    paths:
+      - input.dot
+
+jobs:
+  render-svg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup
+        run: |
+          apt-get -y install graphviz
+
+      - name: render
+        run: |
+          dot -Tsvg input.dot > output.svg
+
+      - name: setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+
+      - name: commit
+        run: |
+          git add output.svg
+          git commit -m "update output.svg"
+          git push origin $GITHUB_REF
