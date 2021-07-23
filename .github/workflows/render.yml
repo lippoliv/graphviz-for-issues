@@ -14,11 +14,10 @@ jobs:
         run: |
           sudo apt-get -y install graphviz
 
+      - uses: actions/checkout@v2
+
       - name: render
         run: |
-          pwd
-          ls -lah
-
           dot -Tsvg input.dot > output.svg
 
       - name: setup git config
