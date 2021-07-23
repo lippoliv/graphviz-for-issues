@@ -16,6 +16,9 @@ jobs:
 
       - name: render
         run: |
+          pwd
+          ls -lah
+
           dot -Tsvg input.dot > output.svg
 
       - name: setup git config
