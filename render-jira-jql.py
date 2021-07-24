@@ -8,6 +8,22 @@ def sanitize_issue_key(issue_key):
     return "\"" + issue_key + "\""
 
 
+# Simple object to write down a single issue, being able to write it out to graphviz.
+class GraphIssue:
+    def __init__(self, issue, jira_url):
+        self.issue_key = issue.key
+        self.link = jira_url + "/browse/" + issue.key
+        self.color = issue.fields.status.statusCategory.colorName
+
+    def __str__(self):
+        attrs = [
+            "color=" + self.color.replace("blue-gray", "blue"),
+            "href=\"" + self.link + "\"",
+        ]
+
+        return sanitize_issue_key(self.issue_key) + "[" + ", ".join(attrs) + "]"
+
+
 # Simple object to write down, who is blocked by whom (one to one).
 class BlockedBy:
     def __init__(self, source, target):
@@ -40,7 +56,7 @@ def find_issues_and_blocked_by_links(jira_url, jira_user, jira_password, jql):
         blocked_by_key = []
 
         # Write down the issue key, we want to have them included in the graph.
-        allIssues.append(issue.key)
+        allIssues.append(GraphIssue(issue, jira_url))
 
         # Scan the links.
         for issue_key in links:
@@ -71,7 +87,7 @@ def write_graphviz_file(label):
 
     # Define all found issues.
     for issue_key in allIssues:
-        file_content.append(sanitize_issue_key(issue_key))
+        file_content.append(issue_key.__str__())
 
     # Define all found "blocked by" links.
     for block_entry in allBlocks:
