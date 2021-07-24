@@ -13,12 +13,12 @@ jobs:
       JIRA_INWARD_LINK: ${{ secrets.JIRA_INWARD_LINK }}
       JIRA_JQL: ${{ secrets.JIRA_JQL }}
     steps:
+      - uses: actions/checkout@v2
+
       - name: setup
         run: |
           sudo apt-get -y install graphviz
           python -m pip install -r requirements.txt
-
-      - uses: actions/checkout@v2
 
       - name: render
         run: |
