@@ -1,0 +1,37 @@
+name: Render
+
+on:
+  workflow_dispatch:
+
+jobs:
+  render-svg:
+    runs-on: ubuntu-latest
+    env:
+      JIRA_URL: ${{ secrets.JIRA_URL }}
+      JIRA_USER: ${{ secrets.JIRA_USER }}
+      JIRA_PASSWORD: ${{ secrets.JIRA_PASSWORD }}
+      JIRA_INWARD_LINK: ${{ secrets.JIRA_INWARD_LINK }}
+      JIRA_JQL: ${{ secrets.JIRA_JQL }}
+    steps:
+      - name: setup
+        run: |
+          sudo apt-get -y install graphviz
+          python -m pip install -r requirements.txt
+
+      - uses: actions/checkout@v2
+
+      - name: render
+        run: |
+          python render-jira-jql.py
+          dot -Tsvg input.dot > output.svg
+
+      - name: setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+
+      - name: commit
+        run: |
+          git add output.svg
+          git commit -m "update output.svg"
+          git push origin $GITHUB_REF
